@@ -13,7 +13,7 @@ export async function addPet(formData) {
             name: formData.get("name"),
             ownerName: formData.get("ownerName"),
             imageUrl: formData.get("imageUrl") || "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
-           // age: parseInt(formData.get("age")),
+            age: parseInt(formData.get("age")),
             notes: formData.get("notes")
         }
     });
@@ -22,4 +22,33 @@ export async function addPet(formData) {
     return { message: "Error adding pet:" };
 }
 revalidatePath("/app", "layout");
+}
+
+export async function editPet(petId: string, formData) {
+
+    sleep(2000);
+
+    try{
+    await prisma.pet.update({
+        where: {
+            id: petId },
+            data: {
+                name: formData.get("name"),
+                ownerName: formData.get("ownerName"),
+                age: parseInt(formData.get("age")),
+                imageUrl: formData.get("imageUrl") || "https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png",
+                notes: formData.get("notes")
+            }
+    });
+    
+    } catch (error) {
+        return { message: "Error editing pet" };
+    }
+
+    revalidatePath("/app", "layout");
+
+}
+
+export async function deletePet(petId: string) {
+    sleep(2000);
 }

@@ -3,12 +3,10 @@
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
-import { Button } from './ui/button'
 import { usePetContext } from '@/lib/hooks';
-import { addPet } from '@/actions/actions';
+import { addPet, editPet } from '@/actions/actions';
 import PetFormBtn from './pet-form-btn';
 import { toast } from 'sonner';
-import { useFormState } from 'react-dom';
 
 type PetFormProps = {
     actionType: "add" | "edit";
@@ -21,12 +19,24 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
 
   return (
     <form action={ async (formData) => { 
+
+        if(actionType === "add") {
         const error = await addPet(formData); 
             if (error) {
                 toast.error(error.message);
                 return;
             }
+        }
+    else if (actionType === "edit") {
+       const error = await editPet(selectedPet?.id, formData); 
+            if (error) {
+                toast.error(error.message);
+                return;
+            }
+    }
+
         onFormSubmission();
+
     }} 
         
         className='flex flex-col'>
