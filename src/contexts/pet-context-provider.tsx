@@ -4,9 +4,6 @@ import { addPet } from "@/actions/actions";
 import { Pet } from "@/lib/types";
 import { createContext, useState } from "react"
 
-
-
-
 type PetContextProviderProps = {
     children: React.ReactNode,
     data: Pet [];

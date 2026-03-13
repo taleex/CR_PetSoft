@@ -4,6 +4,7 @@ import AppFooter from "@/components/app-footer";
 import PetContextProvider from "@/contexts/pet-context-provider";
 import SearchContextProvider from "@/contexts/search-context-provider";
 import prisma  from "@/lib/db";
+import { Toaster } from "sonner";
 
 export default async function Layout({children}: {children: React.ReactNode}) {
 
@@ -22,6 +23,8 @@ export default async function Layout({children}: {children: React.ReactNode}) {
                   </SearchContextProvider>
                 <AppFooter />
             </div>
+
+            <Toaster position="top-right"/>
     </>
   )
 }
