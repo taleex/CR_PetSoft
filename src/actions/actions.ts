@@ -50,5 +50,18 @@ export async function editPet(petId: string, formData) {
 }
 
 export async function deletePet(petId: string) {
-    sleep(2000);
+    await sleep(2000);
+    
+    try {
+    await prisma.pet.delete({
+        where: {
+            id: petId
+        }
+    });
+
+} catch (error){
+    return{ message: "Error deleting pet" };
+}
+
+revalidatePath("/app", "layout");
 }
