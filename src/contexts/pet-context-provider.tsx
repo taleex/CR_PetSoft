@@ -26,12 +26,28 @@ export const PetContext = createContext<TPetContext | null>(null);
 export default function PetContextProvider({children, data}: PetContextProviderProps) {
 
     //State
-     const [optimisticPets, setOptimisticPets] = useOptimistic(data, (state, newPet) => {
-        return [...state, {
-            ...newPet,
-            id: Math.random().toString(),
-        } ];
-     } );
+     const [optimisticPets, setOptimisticPets] = useOptimistic(data, (state, {action, payload}) => {
+        switch(action) {
+            case "add": {
+                return [...state, {...payload, id: Math.random().toString()}];
+            }
+            case "edit": {
+                return state.map((pet) => 
+                    {
+                        if(pet.id === payload.id) {
+                            return {...pet, ...payload.newPetData};
+                        }
+                        return pet; 
+                    });
+            }
+            case "delete": {
+                return state.filter((pet) => pet.id !== payload);
+            }
+            default: {
+                return state;
+            }
+     } });
+
     const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
 
     //Derived state 
@@ -40,7 +56,7 @@ export default function PetContextProvider({children, data}: PetContextProviderP
 
     // event handlers
     const handleAddPet = async (newPet: Omit<Pet, "id">) => {
-        setOptimisticPets(newPet);
+        setOptimisticPets({action: "add", payload: newPet});
          const error = await addPet(newPet); 
             if (error) {
                 toast.error(error.message);
@@ -49,6 +65,7 @@ export default function PetContextProvider({children, data}: PetContextProviderP
     }
 
     const handleEditPet = async (petId: string, newPetData: Omit<Pet, "id">) => {
+        setOptimisticPets({action: "edit", payload: {id: petId, ...newPetData}});
          const error = await editPet(petId, newPetData); 
                     if (error) {
                         toast.error(error.message);
@@ -57,7 +74,12 @@ export default function PetContextProvider({children, data}: PetContextProviderP
     }
 
     const handleCheckoutPet = async (petId: string) => {
-        await deletePet(petId);
+        setOptimisticPets({action: "delete", payload: petId});
+        const error = await deletePet(petId);
+        if (error) {
+            toast.error(error.message);
+            return;
+        }
         setSelectedPetId(null);
     };
 
