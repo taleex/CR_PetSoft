@@ -69,7 +69,7 @@ export async function deletePet(petId: unknown) {
     try {
     await prisma.pet.delete({
         where: {
-            id: validPetId.data
+            id: validPetId.data 
         }
     });
 
