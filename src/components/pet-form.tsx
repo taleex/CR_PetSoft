@@ -6,25 +6,14 @@ import { Textarea } from './ui/textarea'
 import { usePetContext } from '@/lib/hooks';
 import PetFormBtn from './pet-form-btn';
 import { useForm } from 'react-hook-form';
-import z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { da } from 'zod/locales';
 import { DEFAULT_PET_IMAGE_URL } from '@/lib/constants';
+import { petFormSchema, TPetformData } from '@/lib/validations';
 
 type PetFormProps = {
     actionType: "add" | "edit";
     onFormSubmission: () => void;
 }
-
-const petFormSchema = z.object({
-    name: z.string().trim().min(1, "Name must be at least 1 characters").max(100),
-    ownerName: z.string().trim().min(1, "Owner Name must be at least 1 characters"),
-    imageUrl: z.union([z.literal(""), z.string().trim().url({ message: "Image URL must be a valid URL" })]),
-    age: z.coerce.number().int().positive({ message: "Age must be a positive integer" }).max(99999),
-    notes:  z.union([z.literal(""), z.string().trim().max(1000, "Notes must be at most 1000 characters") ]),
-}).transform((data) => ({...data, imageUrl: data.imageUrl || DEFAULT_PET_IMAGE_URL, }));
-
-type TPetformData = z.infer<typeof petFormSchema>;
 
 export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
 
@@ -32,11 +21,18 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
 
     const { register, trigger, getValues, formState: { errors }, } = useForm<TPetformData>({
         resolver: zodResolver(petFormSchema),
+        defaultValues: {
+            name: selectedPet?.name || "",
+            ownerName: selectedPet?.ownerName || "",   
+            imageUrl: selectedPet?.imageUrl || "",
+            age: selectedPet?.age || undefined,
+            notes: selectedPet?.notes || "",
+        }
     });
 
   return (
     <form 
-        action={ async (formData) => { 
+        action={ async () => { 
         const result = await trigger()
         if (!result) return;
         
