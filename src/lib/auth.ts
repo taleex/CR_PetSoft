@@ -23,7 +23,7 @@ const config = {
           return null;
         }
 
-        const passwordsMatch = await bcrypt.compare(password, user.passwordHash);
+        const passwordsMatch = await bcrypt.compare(password, user.hashedPassword);
         if (!passwordsMatch) {
           console.log("Invalid credentials");
           return null;
@@ -34,16 +34,25 @@ const config = {
     }),
   ],
   callbacks: {
-    authorized: ({ request }) => {
-      const isTryingToAccessApp = request.nextUrl.pathname.includes("/app");
+  authorized: ({ auth, request }) => {
+    const isLoggedin = Boolean(auth?.user);
 
-      if (isTryingToAccessApp) {
-        return false;
-      } else {
-        return true;
-      }
-    },
+    const isTryingToAccessApp =
+      request.nextUrl.pathname.includes("/app");
+
+    if (!isLoggedin && isTryingToAccessApp) {
+      return false;
+    }
+
+    if (isLoggedin && isTryingToAccessApp) {
+      return true;
+    }
+
+    if (!isTryingToAccessApp) {
+      return true;
+    }
   },
+},
 } satisfies NextAuthConfig;
 
 export const { auth, signIn } = NextAuth(config);
