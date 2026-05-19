@@ -1,11 +1,15 @@
-import { logIn } from "@/actions/actions";
+import { logIn, signUp } from "@/actions/actions";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 
-export default function AuthForm() {
+type AuthFormProps = {
+    type: "logIn" | "signUp";
+} 
+
+export default function AuthForm({ type }: AuthFormProps) {
   return (
-    <form action= {logIn}>
+    <form action= {type === "logIn" ? logIn : signUp}>
         <div className="space-y-1">
             <Label htmlFor="email">Email</Label>
             <Input type="email" name="email" id="email" />
@@ -15,7 +19,7 @@ export default function AuthForm() {
            <Input type="password" name="password" id="password" />    
         </div>
 
-        <Button> Log In</Button>
+        <Button> { type === "logIn" ? "Log In" : "Sign Up"}</Button>
     </form>
   )
 }

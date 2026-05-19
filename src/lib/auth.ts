@@ -35,7 +35,7 @@ const config = {
   ],
   callbacks: {
   authorized: ({ auth, request }) => {
-    const isLoggedin = Boolean(auth?.user);
+    const isLoggedin = Boolean(auth?.user?.email);
 
     const isTryingToAccessApp =
       request.nextUrl.pathname.includes("/app");
@@ -48,11 +48,18 @@ const config = {
       return true;
     }
 
-    if (!isTryingToAccessApp) {
+    if (isLoggedin && !isTryingToAccessApp) {
+      return Response.redirect(new URL("/app/dashboard", request.url));
+    }
+
+    if (!isLoggedin && !isTryingToAccessApp) {
       return true;
     }
+
+    return false;
+    
   },
 },
 } satisfies NextAuthConfig;
 
-export const { auth, signIn } = NextAuth(config);
+export const { auth, signIn, signOut } = NextAuth(config);
