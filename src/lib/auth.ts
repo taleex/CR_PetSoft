@@ -61,18 +61,18 @@ const config = {
   },
   jwt: ({token, user}) => {
     if (user) {
-      token.id = user.id;
-      token.email = user.email;
+      token.userId = user.id;
     }
     return token;
   },
   session: ({session, token}) => {
-    if (token) {
-      session.user.id = token.id;
-      session.user.email = token.email;
+    if (session.user) {
+      session.user.id = token.userId;
     }
     return session;
 },
+},
 } satisfies NextAuthConfig;
+
 
 export const { auth, signIn, signOut } = NextAuth(config);
