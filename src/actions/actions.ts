@@ -1,5 +1,6 @@
 "use server";
 
+import { Prisma } from "@/generated/client";
 import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { checkAuth, getPetById } from "@/lib/server-utils";
@@ -22,16 +23,40 @@ export async function logIn(formData: unknown) {
     redirect("/app/dashboard");
 }
 
-export async function signUp(formData:FormData) {
+export async function signUp(formData:unknown) {
 
-    const hashedPassword = await bcrypt.hash(formData.get("password") as string, 10);
+    //Check if formData is an instance of FormData
+    if (!(formData instanceof FormData)) {
+        return { message: "Invalid form data" };
+    }
 
+    //convert FormData to an object
+    const formDataEntries = Object.fromEntries(formData.entries());
+
+    // Validation check
+    const validatedFormData = authSchema.safeParse(formDataEntries);
+    if (!validatedFormData.success) {
+        return { message: "Invalid form data" };
+    }
+
+    const {email, password} = validatedFormData.data;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    try{
     await prisma.user.create({
         data: {
-            email: formData.get("email") as string,
+            email: email,
             hashedPassword: hashedPassword,
         }
     });
+} catch (error) {
+    if(error instanceof Prisma.PrismaClientKnownRequestError) {
+        if(error.code === "P2002"){
+            return { message: "Email already in use" };
+        }
+    }
+}
 
     await signIn('credentials', formData);
 
