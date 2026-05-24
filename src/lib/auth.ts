@@ -3,6 +3,7 @@ import type { NextAuthConfig } from "next-auth";
 import prisma from "./db";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { getUserbyEmail } from "./server-utils";
 
 const config = {
   pages: {
@@ -13,11 +14,8 @@ const config = {
       async authorize(credentials) {
         const { email, password } = credentials;
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email: email,
-          },
-        });
+        const user = await getUserbyEmail(email);
+        
         if (!user) {
           console.log("Invalid credentials");
           return null;
