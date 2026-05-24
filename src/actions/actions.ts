@@ -4,17 +4,22 @@ import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { checkAuth, getPetById } from "@/lib/server-utils";
 import { sleep } from "@/lib/utils";
-import { petFormSchema, petIdSchema } from "@/lib/validations";
+import { authSchema, petFormSchema, petIdSchema } from "@/lib/validations";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 // -- user actions--
 
 export async function logIn(formData: unknown) {
 
-
+    if(!(formData instanceof FormData)) {
+        return { message: "Invalid form data" };
+    }
 
     await signIn('credentials', formData );
+
+    redirect("/app/dashboard");
 }
 
 export async function signUp(formData:FormData) {

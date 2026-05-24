@@ -1,9 +1,9 @@
 import NextAuth from "next-auth";
 import type { NextAuthConfig } from "next-auth";
-import prisma from "./db";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { getUserbyEmail } from "./server-utils";
+import { authSchema, TAuth } from "@/lib/validations";
 
 const config = {
   pages: {
@@ -12,7 +12,15 @@ const config = {
   providers: [
     Credentials({
       async authorize(credentials) {
-        const { email, password } = credentials;
+
+        //validation
+        const validdatedFormData = authSchema.safeParse(credentials); 
+          if (!validdatedFormData.success) {
+              return null;
+          }
+
+        // extract values
+        const { email, password } = validdatedFormData.data;
 
         const user = await getUserbyEmail(email);
         
