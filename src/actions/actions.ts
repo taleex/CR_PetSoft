@@ -10,7 +10,9 @@ import { revalidatePath } from "next/cache";
 
 // -- user actions--
 
-export async function logIn(formData: FormData) {
+export async function logIn(formData: unknown) {
+
+
 
     await signIn('credentials', formData );
 }
