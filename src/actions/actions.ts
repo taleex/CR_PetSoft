@@ -1,6 +1,6 @@
 "use server";
 
-import { Prisma } from "@/generated/client";
+import { Prisma } from "@prisma/client";
 import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { checkAuth, getPetById } from "@/lib/server-utils";
@@ -14,6 +14,8 @@ import { redirect } from "next/navigation";
 
 export async function logIn(formData: unknown) {
 
+    await sleep(1000);
+
     if(!(formData instanceof FormData)) {
         return { message: "Invalid form data" };
     }
@@ -24,6 +26,8 @@ export async function logIn(formData: unknown) {
 }
 
 export async function signUp(formData:unknown) {
+
+    await sleep(1000);
 
     //Check if formData is an instance of FormData
     if (!(formData instanceof FormData)) {

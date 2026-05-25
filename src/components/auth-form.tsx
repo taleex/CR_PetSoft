@@ -1,7 +1,7 @@
 import { logIn, signUp } from "@/actions/actions";
-import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
+import AuthFormBtn from "./auth-form-btn";
 
 type AuthFormProps = {
     type: "logIn" | "signUp";
@@ -19,7 +19,7 @@ export default function AuthForm({ type }: AuthFormProps) {
            <Input type="password" name="password" id="password" required maxLength={100}/>    
         </div>
 
-        <Button> { type === "logIn" ? "Log In" : "Sign Up"}</Button>
+        <AuthFormBtn type={type} />
     </form>
   )
 }
