@@ -9,12 +9,15 @@ import { authSchema, petFormSchema, petIdSchema } from "@/lib/validations";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { AuthError } from "next-auth";
 
 // -- user actions--
 
-export async function logIn(formData: unknown) {
+export async function logIn(prevState: unknown, formData: unknown) {
 
     await sleep(1000);
+
+    try {   
 
     if(!(formData instanceof FormData)) {
         return { message: "Invalid form data" };
@@ -22,10 +25,23 @@ export async function logIn(formData: unknown) {
 
     await signIn('credentials', formData );
 
-    redirect("/app/dashboard");
+} catch (error) {
+    if(error instanceof AuthError) {
+        switch (error.type) {
+            case "CredentialsSignin":{
+                return { message: "Invalid credentials" };
+            }
+            default: {
+                return { message: "Error couldn't sign in" };
+            }
+        }
 }
 
-export async function signUp(formData:unknown) {
+throw error; // rethrow unexpected errors
+}
+}
+
+export async function signUp(prevState: unknown, formData:unknown) {
 
     await sleep(1000);
 
@@ -68,6 +84,8 @@ export async function signUp(formData:unknown) {
 }
 
 export async function logOut() {
+    await sleep(1000);
+
     await signOut({ redirectTo: "/" });
   }
 
