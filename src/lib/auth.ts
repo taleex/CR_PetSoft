@@ -4,6 +4,7 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { getUserbyEmail } from "./server-utils";
 import { authSchema } from "@/lib/validations";
+import { sleep } from "./utils";
 
 const config = {
   pages: {
@@ -88,6 +89,7 @@ return false;
     }
 
     if (trigger === "update") {
+      await sleep(1000); // simulate some delay
       const userFromDb = await getUserbyEmail(token.email);
       if (userFromDb) {
         token.hasAccess = userFromDb.hasAccess;

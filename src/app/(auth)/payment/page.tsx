@@ -16,8 +16,7 @@ type PageProps = {
 export default function Page({searchParams}: PageProps) {
 
   const [isPending, startTransition] = useTransition();
-  const { update } = useSession();
-
+  const { data:session, update, status } = useSession();
   const router = useRouter();
 
   return (
@@ -26,7 +25,7 @@ export default function Page({searchParams}: PageProps) {
       <H1>PetSoft access requires payment.</H1>
 
       {searchParams.success && (
-        <Button onClick={async () => {
+        <Button disabled={status === "loading" || session?.user.hasAccess} onClick={async () => {
           await update(true);
           router.push("/app/dashboard");
         }}>Access PetSoft</Button>
