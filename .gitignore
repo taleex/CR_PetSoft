@@ -38,4 +38,3 @@ next-env.d.ts
 # Env files
 .env
 .env.local
-.env
