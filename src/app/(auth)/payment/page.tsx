@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
 
 type PageProps = {
-  searchParams?: {
+  searchParams: {
     [key: string]: string | string[] | undefined;
   };
 };

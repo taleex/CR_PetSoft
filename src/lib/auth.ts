@@ -46,37 +46,51 @@ const config = {
     const isTryingToAccessApp =
       request.nextUrl.pathname.includes("/app");
 
+    // Not logged in + trying to access app → block
     if (!isLoggedin && isTryingToAccessApp) {
       return false;
     }
 
-    if (isLoggedin && isTryingToAccessApp) {
+    // Logged in + trying to access app + no access → payment
+    if (isLoggedin && isTryingToAccessApp && !auth?.user.hasAccess) {
+      return Response.redirect(new URL("/payment", request.url));
+    }
+
+    // Logged in + trying to access app + has access → allow
+    if (isLoggedin && isTryingToAccessApp && auth?.user.hasAccess) {
       return true;
     }
 
+    // Logged in + trying to access login/signup + no access → payment
     if (isLoggedin && !isTryingToAccessApp) {
-      if(request.nextUrl.pathname.includes("/login") || request.nextUrl.pathname.includes("/signup")) {
-        return Response.redirect(new URL("/payment", request.url));}
-
-        return true;
+      if (
+        (request.nextUrl.pathname.includes("/login") ||
+          request.nextUrl.pathname.includes("/signup")) &&
+        !auth?.user.hasAccess
+      ) {
+        return Response.redirect(new URL("/payment", request.url));
+      }
+      return true;
     }
 
+    // Not logged in + public route → allow
     if (!isLoggedin && !isTryingToAccessApp) {
       return true;
     }
 
-    return false;
-    
+return false;  
   },
   jwt: ({token, user}) => {
     if (user) {
       token.userId = user.id;
+      token.hasAccess = user.hasAccess;
     }
     return token;
   },
   session: ({session, token}) => {
     if (session.user) {
       session.user.id = token.userId;
+      session.user.hasAccess = token.hasAccess;
     }
     return session;
 },
