@@ -4,6 +4,8 @@ import { createCheckoutSession } from "@/actions/actions";
 import H1 from "@/components/h1";
 import { Button } from "@/components/ui/button";
 import { useTransition } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 type PageProps = {
   searchParams: {
@@ -14,11 +16,21 @@ type PageProps = {
 export default function Page({searchParams}: PageProps) {
 
   const [isPending, startTransition] = useTransition();
+  const { update } = useSession();
+
+  const router = useRouter();
 
   return (
     <main className="flex flex-col items-center space-y-10">
 
       <H1>PetSoft access requires payment.</H1>
+
+      {searchParams.success && (
+        <Button onClick={async () => {
+          await update(true);
+          router.push("/app/dashboard");
+        }}>Access PetSoft</Button>
+      )}
 
       {
         !searchParams.success && (
