@@ -234,7 +234,7 @@ petsoft/
    npm run dev
    ```
 
-   The application will be available at [http://localhost:3000](http://localhost:3000).
+   The application will be available at [https://taleex-petsoft.vercel.app](https://taleex-petsoft.vercel.app).
 
 ### Environment Variables
 
@@ -247,7 +247,7 @@ Create a `.env` file in the project root. Refer to `.env.example` for the requir
 | `STRIPE_SECRET_KEY` | Stripe secret API key (from your Stripe dashboard) |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret |
 | `NEXT_PUBLIC_STRIPE_PRICE_ID` | Stripe price ID for the lifetime access product |
-| `NEXT_PUBLIC_SERVER_URL` | Base URL of your application (e.g., `http://localhost:3000` for development) |
+| `NEXT_PUBLIC_SERVER_URL` | Base URL of your application (e.g., `https://taleex-petsoft.vercel.app`) |
 
 ---
 
@@ -366,7 +366,7 @@ This application is optimized for deployment on **Vercel** (recommended for Next
    - `NEXT_PUBLIC_SERVER_URL` (set to your Vercel domain)
 4. Deploy.
 
-**Note**: For the Stripe webhook to work in production, configure the webhook endpoint in your Stripe dashboard to point to `https://your-domain.com/api/stripe`.
+**Note**: For the Stripe webhook to work, configure the webhook endpoint in your Stripe dashboard to point to `https://taleex-petsoft.vercel.app/api/stripe`.
 
 ---
 
