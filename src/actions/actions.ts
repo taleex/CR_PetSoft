@@ -4,7 +4,6 @@ import { Prisma } from "@prisma/client";
 import { signIn, signOut } from "@/lib/auth";
 import prisma from "@/lib/db";
 import { checkAuth, getPetById } from "@/lib/server-utils";
-import { sleep } from "@/lib/utils";
 import { authSchema, petFormSchema, petIdSchema } from "@/lib/validations";
 import bcrypt from "bcryptjs";
 import { revalidatePath } from "next/cache";
@@ -12,7 +11,6 @@ import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
 
 // -- user actions--
 

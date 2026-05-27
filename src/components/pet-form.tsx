@@ -1,5 +1,6 @@
 "use client";
 
+import z from "zod";
 import { Label } from './ui/label'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
@@ -8,7 +9,9 @@ import PetFormBtn from './pet-form-btn';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { DEFAULT_PET_IMAGE_URL } from '@/lib/constants';
-import { petFormSchema, TPetformData } from '@/lib/validations';
+import { petFormSchema } from '@/lib/validations';
+import { PetEssentials } from "@/lib/types";
+
 
 type PetFormProps = {
     actionType: "add" | "edit";
@@ -19,7 +22,7 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
 
     const { handleAddPet , handleEditPet, selectedPet} = usePetContext();
 
-    const { register, trigger, getValues, formState: { errors }, } = useForm<TPetformData>({
+    const { register, trigger, getValues, formState: { errors }, } = useForm<z.input<typeof petFormSchema>>({
         resolver: zodResolver(petFormSchema),
         defaultValues: actionType === "edit" 
         ? {
@@ -30,7 +33,7 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
             notes: selectedPet?.notes || "",
         } : undefined,
     });
-
+ 
   return (
     <form 
         action={ async () => { 
@@ -39,7 +42,7 @@ export default function PetForm({actionType, onFormSubmission}: PetFormProps) {
         
         onFormSubmission();
 
-        const petData = getValues();
+        const petData = getValues() as unknown as PetEssentials;
         petData.imageUrl = petData.imageUrl || DEFAULT_PET_IMAGE_URL;
         
         if(actionType === "add") {

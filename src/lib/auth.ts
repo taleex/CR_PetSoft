@@ -4,7 +4,6 @@ import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { getUserbyEmail } from "./server-utils";
 import { authSchema } from "@/lib/validations";
-import { sleep } from "./utils";
 
 const config = {
   pages: {
