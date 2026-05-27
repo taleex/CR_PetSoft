@@ -62,12 +62,16 @@ const config = {
       return true;
     }
 
+    // Logged in + trying to access login/signup + has access → dashboard
+    if (isLoggedin && (request.nextUrl.pathname.includes("/login") || request.nextUrl.pathname.includes("/signup")) && auth?.user.hasAccess) {
+      return Response.redirect(new URL("/app/dashboard", request.url));
+    }
+
     // Logged in + trying to access login/signup + no access → payment
-    if (isLoggedin && !isTryingToAccessApp) {
+    if (isLoggedin && !isTryingToAccessApp && !auth?.user.hasAccess) {
       if (
         (request.nextUrl.pathname.includes("/login") ||
-          request.nextUrl.pathname.includes("/signup")) &&
-        !auth?.user.hasAccess
+          request.nextUrl.pathname.includes("/signup")) 
       ) {
         return Response.redirect(new URL("/payment", request.url));
       }
@@ -89,7 +93,6 @@ return false;
     }
 
     if (trigger === "update") {
-      await sleep(1000); // simulate some delay
       const userFromDb = await getUserbyEmail(token.email);
       if (userFromDb) {
         token.hasAccess = userFromDb.hasAccess;
